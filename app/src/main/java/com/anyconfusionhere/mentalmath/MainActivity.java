@@ -102,19 +102,6 @@ public class MainActivity extends AppCompatActivity {
             b = rand.nextInt(12);
             answer = a * b;
             currentProblem.setText(Integer.toString(a) + "*" + Integer.toString(b) + " =");
-//        } else if (operator == 3) {
-//
-//            do {
-//
-//                a = rand.nextInt(100) +2;
-//                b = rand.nextInt(100) + 1;
-//                answer = a / b;
-//                charVal = String.valueOf(answer);
-//            }while (isStringInt(charVal) == false);
-//            currentProblem.setText(Integer.toString(a) + "/" + Integer.toString(b) + " =");
-//        }
-
-
         }
         scoreTextView.setText(Integer.toString(score) + "/" + Integer.toString(questions));
         currentAnswer.setText("");
@@ -124,11 +111,9 @@ public class MainActivity extends AppCompatActivity {
     public void check(View view) {
 
         if (currentAnswer.getText().equals(String.valueOf(answer))) {
-            Toast.makeText(getApplicationContext(), "CORRECT", Toast.LENGTH_SHORT).show();
             score++;
             questions++;
         } else {
-            Toast.makeText(getApplicationContext(), "WRONG", Toast.LENGTH_SHORT).show();
             questions++;
         }
 
