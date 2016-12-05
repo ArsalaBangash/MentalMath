@@ -85,23 +85,28 @@ public class MainActivity extends AppCompatActivity {
     public void newProblem() {
 
 
-        operator = rand.nextInt(3);
+        operator = rand.nextInt(4);
         if (operator == 0) {
-            a = rand.nextInt(21);
-            b = rand.nextInt(21);
+            a = rand.nextInt(21) + 1;
+            b = rand.nextInt(21) + 1;
             answer = a + b;
             currentProblem.setText(Integer.toString(a) + "+" + Integer.toString(b) + " =");
         } else if (operator == 1) {
-            a = rand.nextInt(21);
-            b = rand.nextInt(21);
+            a = rand.nextInt(21) + 1;
+            b = rand.nextInt(21) + 1;
             answer = a - b;
             currentProblem.setText(Integer.toString(a) + "-" + Integer.toString(b) + " =");
 
         } else if (operator == 2) {
-            a = rand.nextInt(12);
-            b = rand.nextInt(12);
+            a = rand.nextInt(12) + 1;
+            b = rand.nextInt(12) + 1;
             answer = a * b;
             currentProblem.setText(Integer.toString(a) + "*" + Integer.toString(b) + " =");
+        } else if (operator == 3) {
+            answer = rand.nextInt(12) + 1;
+            b = rand.nextInt(12) + 1;
+            a = answer * b;
+            currentProblem.setText(Integer.toString(a) + "/" + Integer.toString(b) + " =");
         }
         scoreTextView.setText(Integer.toString(score) + "/" + Integer.toString(questions));
         currentAnswer.setText("");
@@ -129,17 +134,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public boolean isStringInt(String s) {
-        try
-        {
-            Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException ex)
-        {
-            return false;
-        }
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,8 +148,7 @@ public class MainActivity extends AppCompatActivity {
         timeLeft = (TextView) findViewById(R.id.timeLeft);
         gameRelativeLayout = (RelativeLayout) findViewById(R.id.gameRelativeLayout);
         rand = new Random();
-
-        operator = rand.nextInt(3);
+        operator = rand.nextInt(4);
         newProblem();
         score = 0;
         questions = 0;
