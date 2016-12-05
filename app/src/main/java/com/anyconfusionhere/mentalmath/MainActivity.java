@@ -1,11 +1,11 @@
 package com.anyconfusionhere.mentalmath;
 
+import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -15,23 +15,13 @@ import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity {
-    ImageView startButton;
-    ImageView playAgainButton;
-    TextView finalScore;
-    TextView currentProblem;
-    TextView currentAnswer;
-    TextView timeLeft;
-    TextView scoreTextView;
+    ImageView startButton, playAgainButton;
+    TextView finalScore, currentProblem, currentAnswer, timeLeft, scoreTextView;
     RelativeLayout gameRelativeLayout;
-    int answer;
+    int answer, score, questions, operator, a, b;
+    MediaPlayer correctMP, incorrectMP;
     Random rand;
-    int score;
-    int questions;
-    int operator;
-    int a;
-    int b;
-    double d;
-    String charVal;
+
 
 
     public void start(View view) {
@@ -116,9 +106,11 @@ public class MainActivity extends AppCompatActivity {
     public void check(View view) {
 
         if (currentAnswer.getText().equals(String.valueOf(answer))) {
+                    correctMP.start();
             score++;
             questions++;
         } else {
+            incorrectMP.start();
             questions++;
         }
 
@@ -134,9 +126,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+
+        gameRelativeLayout.setVisibility(View.INVISIBLE);
+        currentAnswer.setVisibility(View.INVISIBLE);
+        currentProblem.setVisibility(View.INVISIBLE);
+        timeLeft.setVisibility(View.INVISIBLE);
+        scoreTextView.setVisibility(View.INVISIBLE);
+        playAgainButton.setVisibility(View.VISIBLE);
+        finalScore.setText("YOUR FINAL SCORE IS: " + scoreTextView.getText().toString());
+        finalScore.setVisibility(View.VISIBLE);
+        startButton.setVisibility(View.INVISIBLE);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        correctMP = MediaPlayer.create(this, R.raw.correct);
+        incorrectMP = MediaPlayer.create(this, R.raw.incorrect);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         startButton = (ImageView) findViewById(R.id.startButton);
