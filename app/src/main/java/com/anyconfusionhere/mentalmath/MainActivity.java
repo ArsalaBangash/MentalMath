@@ -94,7 +94,8 @@ public class MainActivity extends AppCompatActivity {
     public void newProblem() {
 
 
-        operator = rand.nextInt(20);
+        operator = rand.nextInt(23);
+//        operator = 1000;
         if (operator <= 4) {
             a = rand.nextInt(21) + 1;
             b = rand.nextInt(21) + 1;
@@ -120,21 +121,34 @@ public class MainActivity extends AppCompatActivity {
             a = rand.nextInt(10) + 3;
             b = rand.nextInt(exponentMap.get(a)) + 2;
             answer = ((int) Math.pow((double) a, (double) b));
-            SpannableStringBuilder cs = new SpannableStringBuilder(String.valueOf(a) + String.valueOf(b) + " =" );
-            if (cs.length() == 4) {
-                cs.setSpan(new SuperscriptSpan(), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                cs.setSpan(new RelativeSizeSpan(0.75f), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            SpannableStringBuilder stringBuilder = new SpannableStringBuilder(String.valueOf(a) + String.valueOf(b) + " =" );
+            if (stringBuilder.length() == 4) {
+                stringBuilder.setSpan(new SuperscriptSpan(), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                stringBuilder.setSpan(new RelativeSizeSpan(0.75f), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-            if (cs.length() == 5) {
+            if (stringBuilder.length() == 5) {
                 if (a - 10 >= 0) {
-                    cs.setSpan(new SuperscriptSpan(), 2, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    cs.setSpan(new RelativeSizeSpan(0.75f), 2, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    stringBuilder.setSpan(new SuperscriptSpan(), 2, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    stringBuilder.setSpan(new RelativeSizeSpan(0.75f), 2, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 } else {
-                    cs.setSpan(new SuperscriptSpan(), 1, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    cs.setSpan(new RelativeSizeSpan(0.75f), 1, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    stringBuilder.setSpan(new SuperscriptSpan(), 1, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    stringBuilder.setSpan(new RelativeSizeSpan(0.75f), 1, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
-            currentProblem.setText(cs);
+            currentProblem.setText(stringBuilder);
+
+        } else if (operator > 19 && operator <= 22) {
+            answer = rand.nextInt(10) + 3;
+            b = rand.nextInt(exponentMap.get(answer)) + 2;
+            a = (int) Math.pow((double)answer, (double)b);
+            if(b == 2) {
+                currentProblem.setText("\u221A" + String.valueOf(a));
+            } else {
+                SpannableStringBuilder stringBuilder = new SpannableStringBuilder(String.valueOf(b) + "\u221A" + String.valueOf(a));
+                stringBuilder.setSpan(new SuperscriptSpan(), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                stringBuilder.setSpan(new RelativeSizeSpan(0.5f), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                currentProblem.setText(stringBuilder);
+            }
         }
         scoreTextView.setText(Integer.toString(score) + "/" + Integer.toString(questions));
         currentAnswer.setText("");
