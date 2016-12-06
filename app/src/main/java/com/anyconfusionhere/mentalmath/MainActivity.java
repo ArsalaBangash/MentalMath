@@ -4,14 +4,26 @@ import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.SuperscriptSpan;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.awt.font.TextAttribute;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedString;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.Timer;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -19,10 +31,10 @@ public class MainActivity extends AppCompatActivity {
     TextView finalScore, currentProblem, currentAnswer, timeLeft, scoreTextView;
     RelativeLayout gameRelativeLayout;
     int answer, score, questions, operator, a, b;
-    MediaPlayer correctMP, incorrectMP;
+    MediaPlayer correctMP, inCorrectMP;
     Random rand;
-
-
+    CountDownTimer timer;
+    HashMap<Integer,Integer> exponentMap;
 
     public void start(View view) {
 
@@ -36,7 +48,14 @@ public class MainActivity extends AppCompatActivity {
         score = 0;
         questions = 0;
         scoreTextView.setText(Integer.toString(score) + "/" + Integer.toString(questions));
-        new CountDownTimer(60400, 1000) {
+        this.newTimer();
+        timer.start();
+    }
+
+    public void newTimer() {
+
+
+        timer = new CountDownTimer(60400, 1000) {
 
             public void onTick(long millisecondsUntilDone) {
 
@@ -45,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
             public void onFinish() {
                 timeLeft.setText("0s");
-
                 Toast.makeText(getApplicationContext(), "TIME HAS RUN OUT", Toast.LENGTH_LONG).show();
                 gameRelativeLayout.setVisibility(View.INVISIBLE);
                 currentAnswer.setVisibility(View.INVISIBLE);
@@ -57,8 +75,9 @@ public class MainActivity extends AppCompatActivity {
                 finalScore.setVisibility(View.VISIBLE);
                 startButton.setVisibility(View.INVISIBLE);
             }
-        }.start();
+        };
     }
+
 
     public String slice_end(String s, int endIndex) {
         if (endIndex < 0) endIndex = s.length() + endIndex;
@@ -75,28 +94,47 @@ public class MainActivity extends AppCompatActivity {
     public void newProblem() {
 
 
-        operator = rand.nextInt(4);
-        if (operator == 0) {
+        operator = rand.nextInt(20);
+        if (operator <= 4) {
             a = rand.nextInt(21) + 1;
             b = rand.nextInt(21) + 1;
             answer = a + b;
             currentProblem.setText(Integer.toString(a) + "+" + Integer.toString(b) + " =");
-        } else if (operator == 1) {
+        } else if (operator > 4 && operator <= 8) {
             a = rand.nextInt(21) + 1;
             b = rand.nextInt(21) + 1;
             answer = a - b;
             currentProblem.setText(Integer.toString(a) + "-" + Integer.toString(b) + " =");
 
-        } else if (operator == 2) {
+        } else if (operator > 8 && operator <= 12) {
             a = rand.nextInt(12) + 1;
             b = rand.nextInt(12) + 1;
             answer = a * b;
             currentProblem.setText(Integer.toString(a) + "*" + Integer.toString(b) + " =");
-        } else if (operator == 3) {
+        } else if (operator > 12 && operator <= 16) {
             answer = rand.nextInt(12) + 1;
             b = rand.nextInt(12) + 1;
             a = answer * b;
             currentProblem.setText(Integer.toString(a) + "/" + Integer.toString(b) + " =");
+        } else if (operator > 16 && operator <= 19) {
+            a = rand.nextInt(10) + 3;
+            b = rand.nextInt(exponentMap.get(a)) + 2;
+            answer = ((int) Math.pow((double) a, (double) b));
+            SpannableStringBuilder cs = new SpannableStringBuilder(String.valueOf(a) + String.valueOf(b) + " =" );
+            if (cs.length() == 4) {
+                cs.setSpan(new SuperscriptSpan(), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                cs.setSpan(new RelativeSizeSpan(0.75f), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            if (cs.length() == 5) {
+                if (a - 10 >= 0) {
+                    cs.setSpan(new SuperscriptSpan(), 2, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    cs.setSpan(new RelativeSizeSpan(0.75f), 2, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                } else {
+                    cs.setSpan(new SuperscriptSpan(), 1, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    cs.setSpan(new RelativeSizeSpan(0.75f), 1, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+            currentProblem.setText(cs);
         }
         scoreTextView.setText(Integer.toString(score) + "/" + Integer.toString(questions));
         currentAnswer.setText("");
@@ -106,14 +144,13 @@ public class MainActivity extends AppCompatActivity {
     public void check(View view) {
 
         if (currentAnswer.getText().equals(String.valueOf(answer))) {
-                    correctMP.start();
-            score++;
-            questions++;
-        } else {
-            incorrectMP.start();
-            questions++;
-        }
 
+            correctMP.start();
+            score++;
+        } else {
+            inCorrectMP.start();
+        }
+        questions++;
         newProblem();
     }
 
@@ -138,12 +175,27 @@ public class MainActivity extends AppCompatActivity {
         finalScore.setText("YOUR FINAL SCORE IS: " + scoreTextView.getText().toString());
         finalScore.setVisibility(View.VISIBLE);
         startButton.setVisibility(View.INVISIBLE);
+        this.timer.cancel();
+        this.newTimer();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        exponentMap = new HashMap<Integer, Integer>();
+        exponentMap.put(2,5);
+        exponentMap.put(3,3);
+        exponentMap.put(4,2);
+        exponentMap.put(5,2);
+        exponentMap.put(6,2);
+        exponentMap.put(7,1);
+        exponentMap.put(8,1);
+        exponentMap.put(9,1);
+        exponentMap.put(10,2);
+        exponentMap.put(11,1);
+        exponentMap.put(12,1);
+        exponentMap.put(13,1);
         correctMP = MediaPlayer.create(this, R.raw.correct);
-        incorrectMP = MediaPlayer.create(this, R.raw.incorrect);
+        inCorrectMP = MediaPlayer.create(this, R.raw.incorrect);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -156,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
         timeLeft = (TextView) findViewById(R.id.timeLeft);
         gameRelativeLayout = (RelativeLayout) findViewById(R.id.gameRelativeLayout);
         rand = new Random();
-        operator = rand.nextInt(4);
+        operator = rand.nextInt(5);
         newProblem();
         score = 0;
         questions = 0;
