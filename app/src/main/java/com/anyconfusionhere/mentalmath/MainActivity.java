@@ -1,5 +1,6 @@
 package com.anyconfusionhere.mentalmath;
 
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
+import android.text.style.SubscriptSpan;
 import android.text.style.SuperscriptSpan;
 import android.view.View;
 import android.view.Window;
@@ -30,11 +32,34 @@ public class MainActivity extends AppCompatActivity {
     ImageView startButton, playAgainButton;
     TextView finalScore, currentProblem, currentAnswer, timeLeft, scoreTextView;
     RelativeLayout gameRelativeLayout;
-    int answer, score, questions, operator, a, b;
+    int score, questions;
     MediaPlayer correctMP, inCorrectMP;
-    Random rand;
     CountDownTimer timer;
-    HashMap<Integer,Integer> exponentMap;
+    MathModel mathModel;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        correctMP = MediaPlayer.create(this, R.raw.correct);
+        inCorrectMP = MediaPlayer.create(this, R.raw.incorrect);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        startButton = (ImageView) findViewById(R.id.startButton);
+        playAgainButton = (ImageView) findViewById(R.id.playAgain);
+        currentProblem = (TextView) findViewById(R.id.currentProblem);
+        currentAnswer = (TextView) findViewById(R.id.currentAnswer);
+        scoreTextView = (TextView) findViewById(R.id.scoreTextView);
+        finalScore = (TextView) findViewById(R.id.finalScore);
+        timeLeft = (TextView) findViewById(R.id.timeLeft);
+        gameRelativeLayout = (RelativeLayout) findViewById(R.id.gameRelativeLayout);
+        score = 0;
+        questions = 0;
+        scoreTextView.setText(Integer.toString(score) + "/" + Integer.toString(questions));
+        mathModel = new MathModel();
+        currentProblem.setText(mathModel.newProblem());
+    }
+
 
     public void start(View view) {
 
@@ -91,90 +116,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void newProblem() {
-
-
-        operator = rand.nextInt(23);
-//        operator = 1000;
-        if (operator <= 4) {
-            a = rand.nextInt(21) + 1;
-            b = rand.nextInt(21) + 1;
-            answer = a + b;
-            currentProblem.setText(Integer.toString(a) + "+" + Integer.toString(b) + " =");
-        } else if (operator > 4 && operator <= 8) {
-            a = rand.nextInt(21) + 1;
-            b = rand.nextInt(21) + 1;
-            answer = a - b;
-            currentProblem.setText(Integer.toString(a) + "-" + Integer.toString(b) + " =");
-
-        } else if (operator > 8 && operator <= 12) {
-            a = rand.nextInt(12) + 1;
-            b = rand.nextInt(12) + 1;
-            answer = a * b;
-            currentProblem.setText(Integer.toString(a) + "*" + Integer.toString(b) + " =");
-        } else if (operator > 12 && operator <= 16) {
-            answer = rand.nextInt(12) + 1;
-            b = rand.nextInt(12) + 1;
-            a = answer * b;
-            currentProblem.setText(Integer.toString(a) + "/" + Integer.toString(b) + " =");
-        } else if (operator > 16 && operator <= 19) {
-            a = rand.nextInt(10) + 3;
-            b = rand.nextInt(exponentMap.get(a)) + 2;
-            answer = ((int) Math.pow((double) a, (double) b));
-            SpannableStringBuilder stringBuilder = new SpannableStringBuilder(String.valueOf(a) + String.valueOf(b) + " =" );
-            if (stringBuilder.length() == 4) {
-                stringBuilder.setSpan(new SuperscriptSpan(), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                stringBuilder.setSpan(new RelativeSizeSpan(0.75f), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            if (stringBuilder.length() == 5) {
-                if (a - 10 >= 0) {
-                    stringBuilder.setSpan(new SuperscriptSpan(), 2, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    stringBuilder.setSpan(new RelativeSizeSpan(0.75f), 2, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                } else {
-                    stringBuilder.setSpan(new SuperscriptSpan(), 1, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    stringBuilder.setSpan(new RelativeSizeSpan(0.75f), 1, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-            }
-            currentProblem.setText(stringBuilder);
-
-        } else if (operator > 19 && operator <= 22) {
-            answer = rand.nextInt(10) + 3;
-            b = rand.nextInt(exponentMap.get(answer)) + 2;
-            a = (int) Math.pow((double)answer, (double)b);
-            if(b == 2) {
-                currentProblem.setText("\u221A" + String.valueOf(a));
-            } else {
-                SpannableStringBuilder stringBuilder = new SpannableStringBuilder(String.valueOf(b) + "\u221A" + String.valueOf(a));
-                stringBuilder.setSpan(new SuperscriptSpan(), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                stringBuilder.setSpan(new RelativeSizeSpan(0.5f), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                currentProblem.setText(stringBuilder);
-            }
-        }
-        scoreTextView.setText(Integer.toString(score) + "/" + Integer.toString(questions));
-        currentAnswer.setText("");
-    }
-
 
     public void check(View view) {
 
-        if (currentAnswer.getText().equals(String.valueOf(answer))) {
-
+        if (currentAnswer.getText().equals(String.valueOf(mathModel.getAnswer()))) {
             correctMP.start();
             score++;
         } else {
             inCorrectMP.start();
         }
+        currentAnswer.setText("");
         questions++;
-        newProblem();
+        scoreTextView.setText(Integer.toString(score) + "/" + Integer.toString(questions));
+        currentProblem.setText(mathModel.newProblem());
+
     }
 
     public void push(View view) {
         if (currentAnswer.getText().toString().length() < 3) {
-
             currentAnswer.setText(currentAnswer.getText() + view.getTag().toString());
-
         }
-
     }
 
     @Override
@@ -192,42 +153,5 @@ public class MainActivity extends AppCompatActivity {
         this.timer.cancel();
         this.newTimer();
     }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        exponentMap = new HashMap<Integer, Integer>();
-        exponentMap.put(2,5);
-        exponentMap.put(3,3);
-        exponentMap.put(4,2);
-        exponentMap.put(5,2);
-        exponentMap.put(6,2);
-        exponentMap.put(7,1);
-        exponentMap.put(8,1);
-        exponentMap.put(9,1);
-        exponentMap.put(10,2);
-        exponentMap.put(11,1);
-        exponentMap.put(12,1);
-        exponentMap.put(13,1);
-        correctMP = MediaPlayer.create(this, R.raw.correct);
-        inCorrectMP = MediaPlayer.create(this, R.raw.incorrect);
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        startButton = (ImageView) findViewById(R.id.startButton);
-        playAgainButton = (ImageView) findViewById(R.id.playAgain);
-        currentProblem = (TextView) findViewById(R.id.currentProblem);
-        currentAnswer = (TextView) findViewById(R.id.currentAnswer);
-        scoreTextView = (TextView) findViewById(R.id.scoreTextView);
-        finalScore = (TextView) findViewById(R.id.finalScore);
-        timeLeft = (TextView) findViewById(R.id.timeLeft);
-        gameRelativeLayout = (RelativeLayout) findViewById(R.id.gameRelativeLayout);
-        rand = new Random();
-        operator = rand.nextInt(5);
-        newProblem();
-        score = 0;
-        questions = 0;
-        scoreTextView.setText(Integer.toString(score) + "/" + Integer.toString(questions));
-    }
-
 }
 
