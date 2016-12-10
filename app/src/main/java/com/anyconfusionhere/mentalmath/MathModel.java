@@ -39,7 +39,7 @@ public class MathModel {
 
     public SpannableStringBuilder newProblem() {
 
-        operator = rand.nextInt(68);
+        operator = rand.nextInt(72);
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
         if (operator <= 10) {
             a = rand.nextInt(21) + 1;
@@ -61,7 +61,7 @@ public class MathModel {
             answer = rand.nextInt(12) + 1;
             b = rand.nextInt(12) + 1;
             a = answer * b;
-            stringBuilder.append(Integer.toString(a) + "/" + Integer.toString(b) + " =");
+            stringBuilder.append(Integer.toString(a) + "\u00F7" + Integer.toString(b) + " =");
         } else if (operator > 40 && operator <= 49) {
             a = rand.nextInt(10) + 3;
             b = rand.nextInt(exponentMap.get(a)) + 2;
@@ -101,8 +101,12 @@ public class MathModel {
             } else if (String.valueOf(b).length() == 2) {
                 stringBuilder.setSpan(new RelativeSizeSpan(0.35f), 3, 5, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
+        } else if (operator > 67 && operator <= 71) {
+            a = rand.nextInt(20) + 1;
+            b = rand.nextInt(20) + 1;
+            answer = a % b;
+            stringBuilder.append(Integer.toString(a) + "\uFF05" + Integer.toString(b) + " =");
         }
-
         return stringBuilder;
     }
 
