@@ -191,24 +191,23 @@
             android:text="3"
             android:textSize="30sp" />
 
-        <Button
-            android:background="#EDFDFF"
-            
-            android:id="@+id/zeroButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_column="0"
-            android:layout_columnSpan="2"
-            android:layout_columnWeight="1"
-            android:layout_gravity="fill"
-            android:layout_row="3"
-            android:layout_rowWeight="1"
-            android:tag="0"
-            android:text="0"
-            android:textSize="30sp"
-            android:onClick="push" />
+            <Button
+                android:background="#EDFDFF"
+                android:id="@+id/pointButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_row="3"
+                android:layout_rowWeight="1"
+                android:tag="."
+                android:text="."
+                android:textSize="30sp"
+                android:onClick="push" />
 
-        <Button
+            <Button
             android:background="#EDFDFF"
             android:id="@+id/negButton"
             android:layout_width="wrap_content"
@@ -238,8 +237,25 @@
             android:layout_rowSpan="3"
             android:onClick="check" />
 
+            <Button
+                android:background="#EDFDFF"
 
-    </GridLayout>
+                android:id="@+id/zeroButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_row="3"
+                android:layout_rowWeight="1"
+                android:tag="0"
+                android:text="0"
+                android:textSize="30sp"
+                android:onClick="push" />
+
+
+        </GridLayout>
     </RelativeLayout>
 
     <TextView
@@ -299,7 +315,7 @@
         android:text="12+3"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:visibility="invisible"
-        android:textSize="40dp"
+        android:textSize="30dp"
         android:layout_above="@+id/startButton"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -321,7 +337,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="40dp"
+        android:textSize="30dp"
         android:visibility="invisible"
         android:layout_alignBaseline="@+id/currentProblem"
         android:layout_alignBottom="@+id/currentProblem"

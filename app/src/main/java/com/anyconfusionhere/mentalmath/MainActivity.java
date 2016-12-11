@@ -1,31 +1,16 @@
 package com.anyconfusionhere.mentalmath;
 
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.SubscriptSpan;
-import android.text.style.SuperscriptSpan;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.awt.font.TextAttribute;
-import java.text.AttributedCharacterIterator;
-import java.text.AttributedString;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Timer;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -62,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void start(View view) {
-
+        startButton.setVisibility(View.INVISIBLE);
         gameRelativeLayout.setVisibility(View.VISIBLE);
         currentAnswer.setVisibility(View.VISIBLE);
         currentProblem.setVisibility(View.VISIBLE);
@@ -118,8 +103,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void check(View view) {
-
-        if (currentAnswer.getText().equals(String.valueOf(mathModel.getAnswer()))) {
+        Log.d("MYAPP", String.valueOf(currentAnswer.getText()));
+        if (currentAnswer.getText().equals(mathModel.getAnswer())) {
+            if(correctMP.isPlaying()) {
+                correctMP.stop();
+            }
             correctMP.start();
             score++;
         } else {
@@ -133,7 +121,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void push(View view) {
-        if (currentAnswer.getText().toString().length() < 3) {
+
+        if (currentAnswer.getText().toString().length() < 6) {
             currentAnswer.setText(currentAnswer.getText() + view.getTag().toString());
         }
     }
